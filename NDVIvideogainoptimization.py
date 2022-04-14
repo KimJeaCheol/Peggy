@@ -64,7 +64,7 @@ def disp_multiple(im1=None, im2=None, im3=None, im4=None):
 
     combined = np.zeros((2 * height, 2 * width, 3), dtype=np.uint8)
     
-  #    combined[0:height, 0:width, :] = cv2.cvtColor(im1, cv2.COLOR_GRAY2RGB)
+#    combined[0:height, 0:width, :] = cv2.cvtColor(im1, cv2.COLOR_GRAY2RGB)
  #   combined[height:, width:, :] = im1
     combined[0:height, 0:width, :] = im1
  #   combined[height:, 0:width, :] = cv2.cvtColor(im2, cv2.COLOR_GRAY2RGB)
@@ -101,19 +101,18 @@ def contrast_stretch(im):
 
     return out
 
+try:
+    #load display colorbars
+    colorbar= cv2.imread ("/home/pi/Desktop/NDVIcolormap.jpg",1)
 
-#load display colorbars
-colorbar= cv2.imread ("/home/pi/Desktop/NDVIcolormap.jpg",1)
+    colorbar=cv2.resize (colorbar,None, fx=.8,fy=.4,interpolation=cv2.INTER_CUBIC)
 
-colorbar=cv2.resize (colorbar,None, fx=.8,fy=.4,interpolation=cv2.INTER_CUBIC)
+    print (colorbar.shape)
+    colorbarjet=cv2.imread("/home/pi/Desktop/jetcolorbar.jpg",1)
 
-
-print (colorbar.shape)
-colorbarjet=cv2.imread("/home/pi/Desktop/jetcolorbar.jpg",1)
-
-
-print (colorbarjet.shape)
-
+    print (colorbarjet.shape)
+except Exception as e:
+    print(str(e))
 
 #fastie colormap
 def fastieColorMap(ndvi) :
@@ -136,8 +135,9 @@ def run():
 
         # Set the camera parameters
         x = 400
- #       camera.resolution = (int(1.33 * x), x)
+ #      camera.resolution = (int(1.33 * x), x)
         camera.resolution = (544, x) 
+        #camera.rotation = 90
         # Various optional camera settings below:
         camera.framerate = 30
         camera.awb_mode = 'off'
@@ -184,7 +184,6 @@ def run():
                 ndvi = (r.astype(float) - g) / bottom
                 ndvi = contrast_stretch(ndvi)
                 ndvi = ndvi.astype(np.uint8)
-
                 
                 ndvijet = cv2.applyColorMap(ndvi, cv2.COLORMAP_JET)
 
@@ -208,7 +207,10 @@ def run():
 
 
 
-
+                # print(image1)
+                # print(ndvifastie)
+                # print(r)
+                # print(ndvijet)
 
                 # Combine ready for display
                 combined = disp_multiple(image1,ndvifastie,r, ndvijet)
